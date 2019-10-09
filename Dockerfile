@@ -100,7 +100,7 @@ RUN curl --silent --show-error --fail --location \
 RUN echo "clear_env = no" >> /etc/php7/php-fpm.conf
 
 # Install Caddy
-COPY --from=builder /install/caddy /usr/bin/caddy
+COPY /install/caddy /usr/bin/caddy
 
 # Validate install
 RUN /usr/bin/caddy -version
@@ -114,7 +114,7 @@ COPY Caddyfile /etc/Caddyfile
 COPY index.php /srv/index.php
 
 # Install Process Wrapper
-COPY --from=builder /go/bin/parent /bin/parent
+COPY /go/bin/parent /bin/parent
 
 ENTRYPOINT ["/bin/parent", "caddy"]
 CMD ["--conf", "/etc/Caddyfile", "--log", "stdout", "--agree=$ACME_AGREE"]
