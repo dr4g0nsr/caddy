@@ -1,4 +1,4 @@
-FROM golang:1.12-alpine
+FROM golang:1.12-alpine as golang
 
 RUN apk add --no-cache git gcc musl-dev
 
@@ -100,7 +100,7 @@ RUN curl --silent --show-error --fail --location \
 RUN echo "clear_env = no" >> /etc/php7/php-fpm.conf
 
 # Install Caddy
-#RUN mv /install/caddy /usr/bin/caddy
+COPY --from=golang /install/caddy /usr/bin/caddy
 
 # Validate install
 RUN /usr/bin/caddy -version
@@ -114,7 +114,7 @@ COPY Caddyfile /etc/Caddyfile
 COPY index.php /srv/index.php
 
 # Install Process Wrapper
-RUN mv /go/bin/parent /bin/parent
+COPY --from=golang /go/bin/parent /bin/parent
 
 ENTRYPOINT ["/bin/parent", "caddy"]
 CMD ["--conf", "/etc/Caddyfile", "--log", "stdout", "--agree=$ACME_AGREE"]
