@@ -31,10 +31,10 @@ clean: stop ## Clean all volumes mounted locally to NFS (warning, you WILL lost 
 	rm -rf /data/*
 
 build: ## Build the container
-	docker build . -t dr4g0nsr/caddy
+	docker build . -t dr4g0nsr/caddy -t dr4g0nsr/caddy:latest -t dr4g0nsr/caddy:1.0 -t dr4g0nsr/caddy:1
 
 build-nc: ## Build the container without caching
-	docker build . -t dr4g0nsr/caddy nocache
+	docker build . --no-cache=true -t dr4g0nsr/caddy:latest -t dr4g0nsr/caddy:1.0 -t dr4g0nsr/caddy:1
 
 start: ## Start docker containers using docker-compose
 	docker-compose up -d
