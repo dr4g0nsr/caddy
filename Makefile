@@ -21,44 +21,43 @@ DOCKER_COMMAND="docker-compose -f docker-compose.yml"
 .PHONY: help
 
 help: ## This help.
-        @awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
 
 # DOCKER TASKS
 
 clean: stop ## Clean all volumes mounted locally to NFS (warning, you WILL lost all data!)
-        rm -rf /data/*
+	rm -rf /data/*
 
 build: ## Build the container
-        docker build . -t dr4g0nsr/caddy
+	docker build . -t dr4g0nsr/caddy
 
 build-nc: ## Build the container without caching
-        docker build . -t dr4g0nsr/caddy nocache
+	docker build . -t dr4g0nsr/caddy nocache
 
 start: ## Start docker containers using docker-compose
-        docker-compose up -d
+	docker-compose up -d
 
 stop: ## Stop and remove a running container
-        "${DOCKER_COMMAND}" stop
+	"${DOCKER_COMMAND}" stop
 
 remove-dangling: ## Remove all dangling images
-        #@docker rmi \$(docker images -q -f dangling=true)
-        @docker image prune
+	@docker image prune
 
 kill-containers: stop remove-dangling ## Remove all containers, preserve local data
-        @docker system prune -a
-        @docker network prune
+	@docker system prune -a
+	@docker network prune
 
 commit: ## Add changes to git
-        git add * && git commit -m changes && git push
+	git add * && git commit -m changes && git push
 
 connect:
-        @docker exec -it web /bin/bash
+	@docker exec -it web /bin/bash
 
 push:
-        @docker push dr4g0nsr/caddy
+	@docker push dr4g0nsr/caddy
 
 login:
-        @echo "${MYBETTERPASSWORD}" | docker login -u dr4g0nsr --password-stdin
+	@echo "${MYBETTERPASSWORD}" | docker login -u dr4g0nsr --password-stdin
 
